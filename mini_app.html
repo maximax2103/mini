@@ -126,8 +126,8 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(9, 1fr); /* Changed from 3 */
-            grid-template-rows: repeat(9, 1fr);    /* Added for 9x9 */
+            grid-template-columns: repeat(8, 1fr); /* Changed from 9 */
+            grid-template-rows: repeat(8, 1fr);    /* Changed from 9 */
             gap: 8px; /* Reduced gap */
             margin-bottom: 15px; /* Adjusted margin */
         }
@@ -281,7 +281,8 @@
         const attemptsCountSpan = document.getElementById('attempts-count');
         const gameMessageDiv = document.getElementById('game-message');
 
-        const baseCardEmojis = ['🍎', '🍌', '🍒', '🍇', '🍋', '🍓', '🍑', '🥝', '🍍', '🥭', '🥥', '🥑', '🍆', '🥦', '🌶️', '🌽', '🥕', '🥔', '🧅', '🍄', '🥜', '🌰', '🍞', '🥐', '🥯', '🧇', '🧀']; // 27 unique emojis for 9x9 grid
+        // 64 карточки (8x8) -> 3 одинаковых = ~21-22 уникальных эмодзи
+        const baseCardEmojis = ['🍎', '🍌', '🍒', '🍇', '🍋', '🍓', '🍑', '🥝', '🍍', '🥭', '🥥', '🥑', '🍆', '🥦', '🌶️', '🌽', '🥕', '🥔', '🧅', '🍄', '🥜', '🌰', '🍞', '🥐', '🥯']; // 22 unique emojis for 8x8 grid (66 total if all unique appear 3 times)
         let cards = [];
         let flippedCards = [];
         let attempts = 0;
@@ -306,11 +307,27 @@
             flippedCards = [];
 
             const gameCardsData = [];
-            baseCardEmojis.forEach(emoji => {
+            const totalCards = 8 * 8; // For 8x8 grid
+            const uniqueEmojisNeeded = Math.ceil(totalCards / 3); // Each emoji appears 3 times
+
+            let currentEmojis = [];
+            while(currentEmojis.length < uniqueEmojisNeeded) {
+                const emoji = baseCardEmojis[Math.floor(Math.random() * baseCardEmojis.length)];
+                if (!currentEmojis.includes(emoji)) {
+                    currentEmojis.push(emoji);
+                }
+            }
+
+            currentEmojis.forEach(emoji => {
                 gameCardsData.push({ value: emoji, matched: false });
                 gameCardsData.push({ value: emoji, matched: false });
                 gameCardsData.push({ value: emoji, matched: false });
             });
+
+            // Fill remaining slots with random emojis from the currentEmojis set to reach totalCards
+            while (gameCardsData.length < totalCards) {
+                gameCardsData.push({ value: currentEmojis[Math.floor(Math.random() * currentEmojis.length)], matched: false });
+            }
 
             // Shuffle the cards
             gameCardsData.sort(() => Math.random() - 0.5);
