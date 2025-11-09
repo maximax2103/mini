@@ -73,6 +73,7 @@
         <div class="message" id="game-message"></div>
     </div>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const gameGrid = document.getElementById('game-grid');
         const attemptsCountSpan = document.getElementById('attempts-count');
@@ -84,10 +85,18 @@
         let attempts = 0;
         let matchedCount = 0;
 
+        // Initialize Telegram WebApp
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand(); // Expand to full screen
+
+        // Get initial data from bot if any (we'll implement this on bot side later)
+        // For now, let's simulate attempts from user storage
+        let userAttempts = 5; // Placeholder for user's available attempts from bot
+
         function initializeGame() {
             attempts = 0;
             matchedCount = 0;
-            attemptsCountSpan.textContent = attempts;
+            attemptsCountSpan.textContent = userAttempts - attempts; // Display remaining attempts
             gameMessageDiv.textContent = '';
             gameGrid.innerHTML = '';
             cards = [];
@@ -144,7 +153,7 @@
 
                 if (flippedCards.length === 3) {
                     attempts++;
-                    attemptsCountSpan.textContent = attempts;
+                    attemptsCountSpan.textContent = userAttempts - attempts; // Update remaining attempts
                     checkForMatch();
                 }
             }
@@ -164,7 +173,13 @@
                 matchedCount++;
                 if (matchedCount === 1) { // Only one set of 3 matching cards for now
                     gameMessageDiv.textContent = `🎉 Вы выиграли за ${attempts} попыток!`;
-                    // Implement win logic here
+                    // Send win data to bot
+                    Telegram.WebApp.sendData(JSON.stringify({
+                        event: 'game_won',
+                        attemptsUsed: attempts
+                    }));
+                    // Optionally close the web app
+                    // Telegram.WebApp.close();
                 }
             } else {
                 gameMessageDiv.textContent = '❌ Попробуйте ещё раз!';
