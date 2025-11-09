@@ -34,7 +34,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            overflow-x: hidden;
+            /* overflow-x: hidden; */ /* Removing this to debug potential horizontal overflow */
             position: relative;
         }
 
@@ -53,8 +53,9 @@
 
         .main-content {
             flex-grow: 1;
-            padding: 20px;
-            max-width: 500px;
+            padding: 15px; /* Reduced padding */
+            max-width: 100%; /* Changed from 500px to allow full width */
+            box-sizing: border-box; /* Ensure padding is included in element's total width */
             margin: 0 auto;
             width: 100%;
         }
@@ -63,11 +64,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px; /* Adjusted margin */
             position: relative;
         }
         .header-section h1 {
-            font-size: 2.8em;
+            font-size: 2.5em; /* Slightly reduced font size */
             font-weight: 700;
             margin: 0;
             line-height: 1;
@@ -75,9 +76,9 @@
         .attempts-display {
             background: rgba(255, 255, 255, 0.1);
             border-radius: var(--border-radius-small);
-            padding: 8px 15px;
+            padding: 7px 12px; /* Adjusted padding */
             font-weight: 700;
-            font-size: 1.1em;
+            font-size: 1em; /* Slightly reduced font size */
             display: flex;
             align-items: center;
             gap: 5px;
@@ -86,27 +87,27 @@
         .info-card {
             background: linear-gradient(135deg, var(--gold-gradient-start), var(--gold-gradient-end));
             border-radius: var(--border-radius-large);
-            padding: 25px;
-            margin-bottom: 20px;
+            padding: 20px; /* Reduced padding */
+            margin-bottom: 18px; /* Adjusted margin */
             box-shadow: var(--shadow-dark);
             text-align: left;
         }
         .info-card h2 {
-            font-size: 1.6em;
+            font-size: 1.4em; /* Slightly reduced font size */
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 8px; /* Adjusted margin */
             color: var(--text-color-dark);
         }
         .info-card p {
-            font-size: 0.9em;
-            margin-bottom: 15px;
+            font-size: 0.85em; /* Slightly reduced font size */
+            margin-bottom: 12px; /* Adjusted margin */
             color: rgba(0,0,0,0.7);
         }
         .info-card button {
             background-color: rgba(255, 255, 255, 0.3);
             border: none;
             border-radius: var(--border-radius-small);
-            padding: 10px 20px;
+            padding: 8px 15px; /* Adjusted padding */
             color: var(--text-color-dark);
             font-weight: 700;
             cursor: pointer;
@@ -117,17 +118,17 @@
         }
 
         .game-section h2 {
-            font-size: 1.8em;
-            margin-top: 30px;
-            margin-bottom: 20px;
+            font-size: 1.6em; /* Slightly reduced font size */
+            margin-top: 25px; /* Adjusted margin */
+            margin-bottom: 18px; /* Adjusted margin */
             text-align: left;
         }
 
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px; /* Reduced gap */
+            margin-bottom: 15px; /* Adjusted margin */
         }
         .card {
             width: 100%;
@@ -138,7 +139,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5em;
+            font-size: 2.2em; /* Slightly reduced font size */
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: var(--shadow-light);
@@ -161,7 +162,7 @@
             justify-content: center;
             align-items: center;
             backface-visibility: hidden;
-            font-size: 2.5em;
+            font-size: 2.2em; /* Slightly reduced font size */
         }
         .card-front {
             background: linear-gradient(135deg, var(--purple-gradient-start), var(--purple-gradient-end));
@@ -193,8 +194,8 @@
         }
 
         .message {
-            margin-top: 20px;
-            font-size: 1.2em;
+            margin-top: 15px; /* Adjusted margin */
+            font-size: 1.1em; /* Slightly reduced font size */
             font-weight: bold;
             text-align: center;
             min-height: 2em; /* Ensure space for messages */
@@ -202,32 +203,32 @@
 
         .bottom-nav {
             background-color: #222222;
-            padding: 10px 0;
+            padding: 8px 0; /* Adjusted padding */
             display: flex;
             justify-content: space-around;
             width: 100%;
             box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
+            border-top-left-radius: 12px; /* Adjusted radius */
+            border-top-right-radius: 12px; /* Adjusted radius */
         }
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             color: rgba(255, 255, 255, 0.6);
-            font-size: 0.75em;
+            font-size: 0.7em; /* Slightly reduced font size */
             text-decoration: none;
             transition: color 0.3s;
-            padding: 5px 0;
-            min-width: 60px;
+            padding: 4px 0; /* Adjusted padding */
+            min-width: 55px; /* Adjusted min-width */
         }
         .nav-item.active {
             color: var(--text-color-light);
             font-weight: 700;
         }
         .nav-item i {
-            font-size: 1.5em;
-            margin-bottom: 5px;
+            font-size: 1.3em; /* Slightly reduced font size */
+            margin-bottom: 4px; /* Adjusted margin */
         }
         /* Placeholder icons, replace with actual SVG/font icons */
         .nav-item .icon-play::before { content: '▶️'; }
