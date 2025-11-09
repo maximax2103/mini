@@ -126,7 +126,8 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(9, 1fr); /* Changed from 3 */
+            grid-template-rows: repeat(9, 1fr);    /* Added for 9x9 */
             gap: 8px; /* Reduced gap */
             margin-bottom: 15px; /* Adjusted margin */
         }
@@ -280,11 +281,11 @@
         const attemptsCountSpan = document.getElementById('attempts-count');
         const gameMessageDiv = document.getElementById('game-message');
 
-        const cardValues = ['🍎', '🍌', '🍒', '🍇', '🍋', '🍓', '🍑']; // Example values
+        const baseCardEmojis = ['🍎', '🍌', '🍒', '🍇', '🍋', '🍓', '🍑', '🥝', '🍍', '🥭', '🥥', '🥑', '🍆', '🥦', '🌶️', '🌽', '🥕', '🥔', '🧅', '🍄', '🥜', '🌰', '🍞', '🥐', '🥯', '🧇', '🧀']; // 27 unique emojis for 9x9 grid
         let cards = [];
         let flippedCards = [];
         let attempts = 0;
-        let matchedCount = 0;
+        let matchedCount = 0; // Not strictly needed for "first 3 match" win, but good to keep.
 
         // Initialize Telegram WebApp
         Telegram.WebApp.ready();
@@ -292,48 +293,29 @@
 
         // Get initial data from bot if any (we'll implement this on bot side later)
         // For now, let's simulate attempts from user storage
-        let userAttempts = 5; // Placeholder for user's available attempts from bot
+        let userAttempts = 4; // Placeholder for user's available attempts from bot (changed from 5 to 4)
 
         function initializeGame() {
             attempts = 0;
-            matchedCount = 0;
+            matchedCount = 0; // Reset matched count
+            userAttempts = 4; // Resetting attempts on new game. 
             attemptsCountSpan.textContent = userAttempts - attempts; // Display remaining attempts
             gameMessageDiv.textContent = '';
             gameGrid.innerHTML = '';
             cards = [];
             flippedCards = [];
 
-            // Select 3 unique values to be the matching ones
-            const uniqueValues = [];
-            while (uniqueValues.length < 3) {
-                const randomIndex = Math.floor(Math.random() * cardValues.length);
-                const value = cardValues[randomIndex];
-                if (!uniqueValues.includes(value)) {
-                    uniqueValues.push(value);
-                }
-            }
-
-            // Create cards: 3 of each unique value, and the rest random
-            const gameCards = [];
-            uniqueValues.forEach(val => {
-                gameCards.push({ value: val, matched: false });
-                gameCards.push({ value: val, matched: false });
-                gameCards.push({ value: val, matched: false });
+            const gameCardsData = [];
+            baseCardEmojis.forEach(emoji => {
+                gameCardsData.push({ value: emoji, matched: false });
+                gameCardsData.push({ value: emoji, matched: false });
+                gameCardsData.push({ value: emoji, matched: false });
             });
 
-            // Fill remaining slots with random values (ensure they are not one of the unique 3)
-            while (gameCards.length < 9) {
-                const randomIndex = Math.floor(Math.random() * cardValues.length);
-                const value = cardValues[randomIndex];
-                if (!uniqueValues.includes(value)) {
-                    gameCards.push({ value: value, matched: false });
-                }
-            }
-            
             // Shuffle the cards
-            gameCards.sort(() => Math.random() - 0.5);
+            gameCardsData.sort(() => Math.random() - 0.5);
 
-            gameCards.forEach((cardData, index) => {
+            gameCardsData.forEach((cardData, index) => {
                 const cardElement = document.createElement('div');
                 cardElement.classList.add('card');
                 cardElement.dataset.index = index;
@@ -375,7 +357,8 @@
             const allMatch = values.every(value => value === firstValue);
 
             if (allMatch) {
-                gameMessageDiv.textContent = '✅ Найдено совпадение!';
+                gameMessageDiv.textContent = `🎉 Вы угадали 3 ${firstValue} за ${attempts} попыток! Вы выиграли!`;
+                // Mark as matched, disable clicks for these cards
                 flippedCards.forEach(card => {
                     card.dataset.matched = 'true';
                     card.removeEventListener('click', flipCard);
@@ -383,17 +366,20 @@
                     card.querySelector('.card-front').style.background = 'var(--green-gradient-start)';
                     card.querySelector('.card-back').style.background = 'var(--green-gradient-end)';
                 });
-                matchedCount++;
-                if (matchedCount === 1) { // Only one set of 3 matching cards for now
-                    gameMessageDiv.textContent = `🎉 Вы выиграли за ${attempts} попыток!`;
-                    // Send win data to bot
-                    Telegram.WebApp.sendData(JSON.stringify({
-                        event: 'game_won',
-                        attemptsUsed: attempts
-                    }));
-                    // Optionally close the web app
-                    // Telegram.WebApp.close();
-                }
+
+                // Send win data to bot
+                Telegram.WebApp.sendData(JSON.stringify({
+                    event: 'game_won',
+                    attemptsUsed: attempts,
+                    matchedEmoji: firstValue
+                }));
+
+                // Game ends on first win, so we can prepare for a restart or just leave the winning state.
+                // Let's add a timeout to allow the user to see the win, then reset the game.
+                setTimeout(() => {
+                    initializeGame(); // Restart game after a win
+                }, 3000);
+
             } else {
                 gameMessageDiv.textContent = '❌ Попробуйте ещё раз!';
                 // Check if attempts are exhausted
