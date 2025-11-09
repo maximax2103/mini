@@ -27,7 +27,7 @@ dp = Dispatcher(bot)
 @dp.message_handler(commands=['start', 'help'])
 async def cmd_start(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(types.KeyboardButton("🎮 Играть", web_app=types.WebAppInfo(url="https://yourusername.github.io/telegram-mini-app/mini_app.html")))
+    keyboard.add(types.KeyboardButton("🎮 Играть", web_app=types.WebAppInfo(url="https://maximax2103.github.io/mini/")))
     
     await message.answer("Привет! Нажми кнопку, чтобы запустить мини-приложение.", reply_markup=keyboard)
 
@@ -66,3 +66,4 @@ async def web_app_data_handler(message: types.Message):
             await message.answer("❌ Ошибка: Пользователь не найден.")
 
     await message.answer("✅ Данные от игры получены и обработаны!")
+
