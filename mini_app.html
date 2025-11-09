@@ -126,8 +126,8 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(8, 1fr); /* Changed from 9 */
-            grid-template-rows: repeat(8, 1fr);    /* Changed from 9 */
+            grid-template-columns: repeat(3, 1fr); /* Changed from 8 */
+            grid-template-rows: repeat(3, 1fr);    /* Changed from 8 */
             gap: 8px; /* Reduced gap */
             margin-bottom: 15px; /* Adjusted margin */
         }
@@ -281,8 +281,8 @@
         const attemptsCountSpan = document.getElementById('attempts-count');
         const gameMessageDiv = document.getElementById('game-message');
 
-        // 64 карточки (8x8) -> 3 одинаковых = ~21-22 уникальных эмодзи
-        const baseCardEmojis = ['🍎', '🍌', '🍒', '🍇', '🍋', '🍓', '🍑', '🥝', '🍍', '🥭', '🥥', '🥑', '🍆', '🥦', '🌶️', '🌽', '🥕', '🥔', '🧅', '🍄', '🥜', '🌰', '🍞', '🥐', '🥯']; // 22 unique emojis for 8x8 grid (66 total if all unique appear 3 times)
+        // 3x3 grid (9 cards)
+        const baseCardEmojis = ['🍎', '🍌', '🍒', '🍇', '🍋', '🍓', '🍑']; // Example values for 3x3
         let cards = [];
         let flippedCards = [];
         let attempts = 0;
@@ -307,8 +307,8 @@
             flippedCards = [];
 
             const gameCardsData = [];
-            const totalCards = 8 * 8; // For 8x8 grid
-            const uniqueEmojisNeeded = Math.ceil(totalCards / 3); // Each emoji appears 3 times
+            const totalCards = 3 * 3; // For 3x3 grid
+            const uniqueEmojisNeeded = 3; // 3 unique emojis, each appearing 3 times
 
             let currentEmojis = [];
             while(currentEmojis.length < uniqueEmojisNeeded) {
@@ -324,11 +324,8 @@
                 gameCardsData.push({ value: emoji, matched: false });
             });
 
-            // Fill remaining slots with random emojis from the currentEmojis set to reach totalCards
-            while (gameCardsData.length < totalCards) {
-                gameCardsData.push({ value: currentEmojis[Math.floor(Math.random() * currentEmojis.length)], matched: false });
-            }
-
+            // No need to fill remaining slots, as 3*3 = 9 and we have 3*3 emojis
+            
             // Shuffle the cards
             gameCardsData.sort(() => Math.random() - 0.5);
 
