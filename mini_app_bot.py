@@ -1,8 +1,10 @@
 import logging
+import json # Добавлено для обработки JSON данных
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
 
 import config
+import storage # Добавлено для работы с хранилищем пользователей
 
 # Настройка логирования
 logging.basicConfig(
@@ -43,3 +45,24 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Критическая ошибка: {e}")
         raise
+
+@dp.message_handler(content_types=types.ContentType.WEB_APP_DATA)
+async def web_app_data_handler(message: types.Message):
+    logger.info(f"Получены данные от Web App от пользователя {message.from_user.id}: {message.web_app_data.data}")
+    
+    # Здесь вы можете обработать данные, например, обновить количество попыток пользователя
+    data = json.loads(message.web_app_data.data)
+    if data['event'] == 'game_won':
+        attempts_used = data['attemptsUsed']
+        user = storage.get_user(message.from_user.id)
+        if user:
+            # Предполагаем, что у пользователя есть поле 'attempts'
+            # Если его нет, вам нужно будет добавить его в storage.py и при создании пользователя
+            current_attempts = user.get('attempts', 0) # Получаем текущие попытки, по умолчанию 0
+            user['attempts'] = current_attempts - attempts_used
+            storage.update_user(user['telegram_id'], attempts=user['attempts'])
+            await message.answer(f"🎉 Вы выиграли в игре и использовали {attempts_used} попыток! У вас осталось {user['attempts']} попыток.")
+        else:
+            await message.answer("❌ Ошибка: Пользователь не найден.")
+
+    await message.answer("✅ Данные от игры получены и обработаны!")
