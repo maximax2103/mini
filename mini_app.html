@@ -349,6 +349,8 @@
                         <div class="card-back">${cardData.value}</div>
                     </div>
                 `;
+                // Ensure cards start unflipped
+                // cardElement.classList.remove('flipped'); // This is already the default state, but good to ensure
                 cardElement.addEventListener('click', flipCard);
                 gameGrid.appendChild(cardElement);
                 cards.push(cardElement);
@@ -397,10 +399,25 @@
                 }
             } else {
                 gameMessageDiv.textContent = '❌ Попробуйте ещё раз!';
-                setTimeout(() => {
-                    flippedCards.forEach(card => card.classList.remove('flipped'));
-                    gameMessageDiv.textContent = '';
-                }, 1500); // Increased timeout for better visual feedback
+                // Check if attempts are exhausted
+                if (userAttempts - attempts <= 0) {
+                    gameMessageDiv.textContent = `😭 Попытки закончились! Игра будет перезапущена.`;
+                    // Reveal all cards briefly before restarting
+                    cards.forEach(card => card.classList.add('flipped'));
+                    setTimeout(() => {
+                        initializeGame(); // Reset game
+                        Telegram.WebApp.sendData(JSON.stringify({
+                            event: 'game_over',
+                            reason: 'no_attempts_left',
+                            attemptsUsed: attempts
+                        }));
+                    }, 3000); // Give time to read message and see cards
+                } else {
+                    setTimeout(() => {
+                        flippedCards.forEach(card => card.classList.remove('flipped'));
+                        gameMessageDiv.textContent = '';
+                    }, 1500);
+                }
             }
             flippedCards = []; // Clear flipped cards for the next turn
         }
